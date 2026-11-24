@@ -116,6 +116,16 @@ footer{position:relative;z-index:1;border-top:1px solid var(--line)}
 footer .wrap{display:flex;flex-wrap:wrap;gap:10px 30px;justify-content:space-between;padding-block:24px;font-size:12.5px;color:var(--silver);font-family:var(--mono)}
 .toast{position:fixed;z-index:70;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:linear-gradient(135deg,var(--gold-hi),var(--gold));color:var(--gold-ink);font-weight:600;padding:11px 20px;border-radius:999px;font-size:13.5px;box-shadow:0 10px 30px rgba(0,0,0,.45)}
 textarea#copyFallback{width:100%;min-height:130px;background:var(--field);color:var(--paper);border:1px solid var(--line-strong);border-radius:12px;padding:12px;font:13px var(--mono)}
+.stack{display:grid;gap:22px;padding-bottom:40px}
+.stack>*{min-width:0}
+.fields-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.fields-grid .span2{grid-column:1/-1}
+.stages{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px 18px;margin-top:14px}
+.stage{display:grid;grid-template-columns:28px 1fr 1fr 34px;gap:8px;align-items:center}
+.stage .n{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.legend-stages span{font-size:14px;padding:7px 14px}
+.legend-stages span b{font-family:var(--mono);font-weight:500;font-size:15px;color:var(--gold-hi);margin-left:4px}
+.legend-stages span em{font-style:normal;color:var(--silver)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -134,13 +144,13 @@ textarea#copyFallback{width:100%;min-height:130px;background:var(--field);color:
     <p>Quanto o cliente paga em cada fase da construção, com um teto definido que não é ultrapassado.</p>
   </div>
 
-<div class="grid">
-    <!-- DADOS -->
+<div class="stack">
+    <!-- 1. DADOS -->
     <section class="panel" aria-labelledby="h-dados">
       <div class="eyebrow">Preenchimento do corretor</div>
       <h2 id="h-dados">Dados da simulação</h2>
-      <div class="fields">
-        <label>Nome do cliente
+      <div class="fields-grid">
+        <label class="span2">Nome do cliente
           <div class="inp"><input id="cliente" type="text" placeholder="Ex.: Maria Souza" autocomplete="off"></div>
         </label>
         <label>Valor do imóvel
@@ -149,34 +159,17 @@ textarea#copyFallback{width:100%;min-height:130px;background:var(--field);color:
         <label>Valor financiado (Caixa)
           <div class="inp"><span>R$</span><input id="financiado" inputmode="decimal" value="500.000,00"></div>
         </label>
-        <div class="row2">
-          <label>Teto sobre financ.
-            <div class="inp"><input id="tetoPct" inputmode="decimal" value="12"><span>%</span></div>
-          </label>
-          <label>Prazo de obra
-            <div class="inp"><input id="prazo" inputmode="numeric" value="29"><span>meses</span></div>
-          </label>
-        </div>
-        <div class="calc-line"><span>Teto total a pagar na obra</span><b id="tetoOut">R$ 60.000,00</b></div>
-
-        <div>
-          <div class="eyebrow" style="margin-top:6px">Cronograma de liberação</div>
-          <p class="hint">Percentual de obra liberado pela Caixa e quantos meses o cliente fica em cada fase. A parcela de cada mês é proporcional ao percentual liberado.</p>
-          <div class="stages" id="stages">
-            <div class="stage-h"><span>% da obra</span><span>Meses</span><span></span></div>
-          </div>
-          <div class="btns">
-            <button class="btn" id="addStage" type="button">+ Fase</button>
-            <button class="btn" id="redistribute" type="button">Distribuir meses no prazo</button>
-            <button class="btn" id="reset" type="button">Restaurar exemplo</button>
-          </div>
-          <p class="hint" id="monthsCheck" style="margin-top:8px"></p>
-        </div>
+        <label>Teto sobre financ.
+          <div class="inp"><input id="tetoPct" inputmode="decimal" value="12"><span>%</span></div>
+        </label>
+        <label>Prazo de obra
+          <div class="inp"><input id="prazo" inputmode="numeric" value="29"><span>meses</span></div>
+        </label>
+        <div class="calc-line span2"><span>Teto total a pagar na obra</span><b id="tetoOut">R$ 60.000,00</b></div>
       </div>
     </section>
 
-    <!-- RESULTADO -->
-    <div class="result">
+    <!-- 2. TOTAL -->
       <section class="hero" aria-labelledby="h-res">
         <div class="hero-top">
           <div>
@@ -202,6 +195,7 @@ textarea#copyFallback{width:100%;min-height:130px;background:var(--field);color:
         <textarea id="copyFallback" hidden readonly aria-label="Resumo para copiar"></textarea>
       </section>
 
+    <!-- 3. MÊS A MÊS -->
       <section class="panel" aria-labelledby="h-chart">
         <div class="eyebrow">Mês a mês</div>
         <h2 id="h-chart">Parcela de evolução de obra</h2>
@@ -212,6 +206,21 @@ textarea#copyFallback{width:100%;min-height:130px;background:var(--field);color:
         <div class="legend-stages" id="stageLegend"></div>
       </section>
 
+    <!-- 4. CRONOGRAMA -->
+    <section class="panel" aria-labelledby="h-crono">
+      <div class="eyebrow">Fases da obra</div>
+      <h2 id="h-crono">Cronograma de liberação</h2>
+      <p class="hint">Percentual de obra liberado pela Caixa e quantos meses o cliente fica em cada fase. A parcela de cada mês é proporcional ao percentual liberado.</p>
+      <div class="stages" id="stages"></div>
+      <div class="btns">
+        <button class="btn" id="addStage" type="button">+ Fase</button>
+        <button class="btn" id="redistribute" type="button">Distribuir meses no prazo</button>
+        <button class="btn" id="reset" type="button">Restaurar exemplo</button>
+      </div>
+      <p class="hint" id="monthsCheck" style="margin-top:8px"></p>
+    </section>
+
+    <!-- 5. TABELA -->
       <section class="panel" aria-labelledby="h-tab">
         <div class="eyebrow">Detalhamento</div>
         <h2 id="h-tab">Tabela de pagamentos</h2>
@@ -224,7 +233,6 @@ textarea#copyFallback{width:100%;min-height:130px;background:var(--field);color:
         </div>
         <p class="note">Simulação para orientação do cliente. A parcela de cada mês acompanha o percentual de obra liberado pela Caixa e é calibrada para que a soma de todo o período feche exatamente no teto. Os valores reais dependem das medições da Caixa e das condições do contrato.</p>
       </section>
-    </div>
   </div>
 </main>
 <footer><div class="wrap"><span>Fred Avelar · Corretor de imóveis</span><span>Simulação sem valor contratual</span></div></footer>
@@ -263,8 +271,8 @@ textarea#copyFallback{width:100%;min-height:130px;background:var(--field);color:
     box.querySelectorAll('.stage').forEach(e=>e.remove());
     stages.forEach((s,i)=>{
       const row = document.createElement('div'); row.className='stage';
-      row.innerHTML = `<div class="inp"><input id="st-pct-${i}" inputmode="decimal" value="${String(s.pct).replace('.',',')}" aria-label="Percentual da fase ${i+1}"><span>%</span></div>
-        <div class="inp"><input id="st-m-${i}" inputmode="numeric" value="${s.meses}" aria-label="Meses da fase ${i+1}"><span>m</span></div>
+      row.innerHTML = `<span class="n">${i+1}ª</span><div class="inp"><input id="st-pct-${i}" inputmode="decimal" value="${String(s.pct).replace('.',',')}" aria-label="Percentual da fase ${i+1}"><span>% obra</span></div>
+        <div class="inp"><input id="st-m-${i}" inputmode="numeric" value="${s.meses}" aria-label="Meses da fase ${i+1}"><span>meses</span></div>
         <button class="icon-btn" type="button" aria-label="Remover fase ${i+1}">×</button>`;
       row.querySelector(`#st-pct-${i}`).addEventListener('input',e=>{ s.pct = Math.min(100,Math.max(0,parseBR(e.target.value))); calc(); });
       row.querySelector(`#st-m-${i}`).addEventListener('input',e=>{ s.meses = Math.max(0,Math.round(parseBR(e.target.value))); calc(); });
@@ -343,7 +351,7 @@ textarea#copyFallback{width:100%;min-height:130px;background:var(--field);color:
     // legenda de fases
     $('stageLegend').innerHTML = stages.filter(s=>s.meses>0).map(s=>{
       const v = Math.floor(base*s.pct)/100;
-      return `<span>${fmtPct(s.pct)} · ${s.meses}m · ${fmt(v)}</span>`;
+      return `<span><em>${fmtPct(s.pct)} · ${s.meses} ${s.meses===1?'mês':'meses'} ·</em><b>${fmt(v)}</b></span>`;
     }).join('');
 
     last = {nome, imovel, fin, tetoPct, teto, total, months, base, stages:stages.map(s=>({...s}))};
