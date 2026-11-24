@@ -136,6 +136,10 @@ textarea#copyFallback{width:100%;min-height:130px;background:var(--field);color:
 .legend-stages span{font-size:14px;padding:7px 14px}
 .legend-stages span b{font-family:var(--mono);font-weight:500;font-size:15px;color:var(--gold-hi);margin-left:4px}
 .legend-stages span em{font-style:normal;color:var(--silver)}
+.legend-stages span.split{border-radius:14px;line-height:1.5}
+.legend-stages span.split em:first-child{display:block}
+.legend-stages span.split i{font-style:normal;font-family:var(--mono);color:var(--paper)}
+.legend-stages span.split b{margin-left:0;font-size:16px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -362,7 +366,7 @@ textarea#copyFallback{width:100%;min-height:130px;background:var(--field);color:
     $('kBase').textContent = fmt(base);
 
     // valor por pessoa, marcado ao lado de cada valor
-    const icon = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="5.2" r="2.7"/><path d="M2.8 14c.6-2.8 2.7-4.3 5.2-4.3s4.6 1.5 5.2 4.3"/></svg>';
+    const icon = '';
     const setEach = (id,v) => { const e=$(id); e.hidden = n===1 || v==null; if(!e.hidden) e.innerHTML = `${icon}${fmt(per(v))} <em>cada</em>`; };
     setEach('eTotal', total);
     setEach('eFirst', first?first.val:null);
@@ -386,7 +390,8 @@ textarea#copyFallback{width:100%;min-height:130px;background:var(--field);color:
     // legenda de fases
     $('stageLegend').innerHTML = stages.filter(s=>s.meses>0).map(s=>{
       const v = Math.floor(base*s.pct)/100;
-      return `<span><em>${fmtPct(s.pct)} · ${s.meses} ${s.meses===1?'mês':'meses'} ·</em><b>${fmt(v)}</b>${n>1?`<em> · ${fmt(per(v))} por pessoa</em>`:''}</span>`;
+      if(n===1) return `<span><em>${fmtPct(s.pct)} · ${s.meses} ${s.meses===1?'mês':'meses'} ·</em><b>${fmt(v)}</b></span>`;
+      return `<span class="split"><em>${fmtPct(s.pct)} · ${s.meses} ${s.meses===1?'mês':'meses'} · <i>${fmt(v)}</i></em><b>${fmt(per(v))}</b> <em>por pessoa</em></span>`;
     }).join('');
 
     last = {nome, n, per, imovel, fin, tetoPct, teto, total, months, base, stages:stages.map(s=>({...s}))};
