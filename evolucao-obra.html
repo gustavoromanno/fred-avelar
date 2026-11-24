@@ -21,20 +21,20 @@
   --glass:rgba(8,17,31,.82); --glass-2:rgba(8,17,31,.6); --tint:rgba(201,169,106,.10);
   --header-bg:rgba(8,17,31,.72); --btn-line:rgba(238,241,245,.25);
   --glow-a:rgba(201,169,106,.10); --glow-b:rgba(60,96,150,.18);
-  --btn-a:#e4cd9a; --btn-b:#c9a96a; --bar-top:#e4cd9a; --bar-bot:#8a7449; --shadow:var(--shadow);
+  --btn-a:#e4cd9a; --btn-b:#c9a96a; --btn-shadow:rgba(201,169,106,.28); --bar-top:#e4cd9a; --bar-bot:#8a7449; --shadow:var(--shadow);
   --r:14px; color-scheme:dark;
 }
 /* versão clara (botão sol/lua no topo) */
 :root.fa-light{
   --ink:#eef1f5; --navy:#ffffff; --navy-2:#f7f9fc; --field:#ffffff;
-  --line:rgba(150,118,58,.28); --line-strong:rgba(150,118,58,.5); --line-soft:rgba(13,26,46,.09);
-  --gold:#a8843f; --gold-hi:#8a6a2c; --gold-lo:#c9a96a; --gold-ink:#1a1407;
+  --line:rgba(13,26,46,.14); --line-strong:rgba(13,26,46,.3); --line-soft:rgba(13,26,46,.08);
+  --gold:#2c4a75; --gold-hi:#13233c; --gold-lo:#5b7aa6; --gold-ink:#ffffff;
   --silver:#4a5667; --muted:#677284; --paper:#0d1a2e;
   --av:#9a6200; --av-bg:rgba(231,176,79,.18); --bad:#c62f36; --bad-bg:rgba(198,47,54,.10); --warn:#b4532f; --warn-bg:rgba(180,83,47,.10);
-  --glass:rgba(255,255,255,.9); --glass-2:#f3f5f8; --tint:rgba(201,169,106,.14);
-  --header-bg:rgba(238,241,245,.82); --btn-line:rgba(13,26,46,.22);
-  --glow-a:rgba(201,169,106,.16); --glow-b:rgba(60,96,150,.10);
-  --bar-top:#b8955a; --bar-bot:#e6d6b0; --shadow:rgba(13,26,46,.16);
+  --glass:rgba(255,255,255,.9); --glass-2:#f3f5f8; --tint:rgba(44,74,117,.08);
+  --header-bg:rgba(238,241,245,.85); --btn-line:rgba(13,26,46,.22);
+  --glow-a:rgba(60,96,150,.10); --glow-b:rgba(60,96,150,.08);
+  --btn-a:#1d3354; --btn-b:#0d1a2e; --btn-shadow:rgba(13,26,46,.22); --bar-top:#13233c; --bar-bot:#7f9bc2; --shadow:rgba(13,26,46,.16);
   color-scheme:light;
 }
 *{box-sizing:border-box}
@@ -86,8 +86,8 @@ label{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;font-size:10.5px;
 .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--btn-line);background:none;color:var(--paper);font:600 13px var(--body);padding:9px 16px;border-radius:999px;cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s,color .2s;white-space:nowrap}
 .btn:hover{border-color:var(--gold);color:var(--gold-hi)}
-.btn.solid{background:linear-gradient(135deg,var(--btn-a),var(--btn-b));color:var(--gold-ink);border:0;padding:12px 22px;font-size:14px;box-shadow:0 8px 28px rgba(201,169,106,.25)}
-.btn.solid:hover{transform:translateY(-1px);box-shadow:0 12px 34px rgba(201,169,106,.35);color:var(--gold-ink)}
+.btn.solid{background:linear-gradient(135deg,var(--btn-a),var(--btn-b));color:var(--gold-ink);border:0;padding:12px 22px;font-size:14px;box-shadow:0 8px 28px var(--btn-shadow)}
+.btn.solid:hover{transform:translateY(-1px);box-shadow:0 12px 34px var(--btn-shadow);color:var(--gold-ink)}
 .btn svg{width:18px;height:18px}
 :focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:6px}
 .chip{display:inline-flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;padding:6px 12px;border-radius:999px;background:var(--glass);border:1px solid var(--line-strong);color:var(--gold-hi)}
