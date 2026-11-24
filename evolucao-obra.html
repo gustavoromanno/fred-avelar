@@ -52,10 +52,11 @@ label{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;font-size:10.5px;
 .inp input[type=text]{font-family:var(--body)}
 .inp select{flex:1;min-width:0;width:100%;background:none;border:0;outline:0;color:var(--paper);font:500 15px var(--body);padding:11px 2px;cursor:pointer}
 .inp select option{background:var(--navy);color:var(--paper)}
-.pp{display:grid;gap:10px}
-.pp-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
-.pp-h .t{font-family:var(--display);font-style:italic;font-size:20px;color:var(--gold-hi)}
-.pp-h .s{font-size:12px;color:var(--silver)}
+.each{display:inline-flex;align-items:center;gap:5px;justify-self:start;margin-top:6px;padding:3px 9px 3px 7px;border-radius:999px;border:1px solid var(--line-strong);background:rgba(201,169,106,.10);color:var(--gold-hi);font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums;max-width:100%;white-space:nowrap}
+.each svg{width:13px;height:13px;flex:none}
+.each em{font-style:normal;font-family:var(--body);font-size:11.5px;color:var(--silver)}
+.each.lg{font-size:15px;padding:6px 14px 6px 11px;margin-top:-6px;gap:7px}
+.each.lg svg{width:16px;height:16px}
 .hint{font-size:12.5px;color:var(--silver);margin:4px 0 0}
 .calc-line{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;color:var(--silver);padding:12px 14px;border:1px solid var(--line-strong);border-radius:12px;background:rgba(201,169,106,.06)}
 .calc-line b{color:var(--gold-hi);font-family:var(--display);font-weight:500;font-size:20px}
@@ -90,7 +91,7 @@ label{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;font-size:10.5px;
 .meter-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-hi));border-radius:99px}
 .meter-lab{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--silver);font-variant-numeric:tabular-nums}
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-block:1px solid var(--line);padding-block:14px}
-.kpi{padding-inline:14px;min-width:0}
+.kpi{padding-inline:14px;min-width:0;display:grid;align-content:start}
 .kpi:first-child{padding-left:0}
 .kpi+.kpi{border-left:1px solid var(--line)}
 @media (max-width:640px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:14px}.kpi:nth-child(3){border-left:0;padding-left:0}}
@@ -191,24 +192,16 @@ textarea#copyFallback{width:100%;min-height:130px;background:var(--field);color:
           <span class="chip ok" id="statusChip" role="status"></span>
         </div>
         <div class="big" id="totalOut">R$ 60.000<small>em 29 meses</small></div>
+        <div class="each lg" id="eTotal" hidden></div>
         <div class="meter">
           <div class="meter-bar"><i id="meterFill" style="width:100%"></i></div>
           <div class="meter-lab"><span id="meterL"></span><span id="meterR"></span></div>
         </div>
         <div class="kpis">
-          <div class="kpi"><div class="k">Primeira parcela</div><div class="v" id="kFirst"></div><div class="s" id="kFirstS"></div></div>
-          <div class="kpi"><div class="k">Maior parcela</div><div class="v" id="kMax"></div><div class="s" id="kMaxS"></div></div>
-          <div class="kpi"><div class="k">Média mensal</div><div class="v" id="kAvg"></div><div class="s">ao longo da obra</div></div>
-          <div class="kpi"><div class="k">Parcela base (100%)</div><div class="v" id="kBase"></div><div class="s">referência de cálculo</div></div>
-        </div>
-        <div class="pp" id="ppBox" hidden>
-          <div class="pp-h"><span class="t" id="ppTitle"></span><span class="s">valor dividido igualmente</span></div>
-          <div class="kpis">
-            <div class="kpi"><div class="k">Total por pessoa</div><div class="v" id="pTotal"></div><div class="s" id="pTotalS"></div></div>
-            <div class="kpi"><div class="k">Primeira parcela</div><div class="v" id="pFirst"></div><div class="s">por pessoa</div></div>
-            <div class="kpi"><div class="k">Maior parcela</div><div class="v" id="pMax"></div><div class="s">por pessoa</div></div>
-            <div class="kpi"><div class="k">Média mensal</div><div class="v" id="pAvg"></div><div class="s">por pessoa</div></div>
-          </div>
+          <div class="kpi"><div class="k">Primeira parcela</div><div class="v" id="kFirst"></div><div class="each" id="eFirst" hidden></div><div class="s" id="kFirstS"></div></div>
+          <div class="kpi"><div class="k">Maior parcela</div><div class="v" id="kMax"></div><div class="each" id="eMax" hidden></div><div class="s" id="kMaxS"></div></div>
+          <div class="kpi"><div class="k">Média mensal</div><div class="v" id="kAvg"></div><div class="each" id="eAvg" hidden></div><div class="s">ao longo da obra</div></div>
+          <div class="kpi"><div class="k">Parcela base (100%)</div><div class="v" id="kBase"></div><div class="each" id="eBase" hidden></div><div class="s">referência de cálculo</div></div>
         </div>
         <div class="btns" style="margin-top:0">
           <button class="btn solid" id="copy" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 20.5l1.3-4A8.5 8.5 0 1 1 8 19.6z"/><path d="M9 9.2c.3 2.3 2.2 4.4 4.6 4.9l1-1.2 2 .8-.3 1.6c-3.5.4-7.6-3.3-7.6-6.9l1.6-.4.8 2z"/></svg>Copiar resumo para WhatsApp</button>
@@ -368,14 +361,15 @@ textarea#copyFallback{width:100%;min-height:130px;background:var(--field);color:
     $('kAvg').textContent = totalMeses?fmt(total/totalMeses):'—';
     $('kBase').textContent = fmt(base);
 
-    // por pessoa
-    $('ppBox').hidden = n===1;
-    $('ppTitle').textContent = `Para cada uma das ${n} pessoas`;
-    $('pTotal').textContent = fmt(per(total));
-    $('pTotalS').textContent = `em ${totalMeses} ${totalMeses===1?'mês':'meses'}`;
-    $('pFirst').textContent = first?fmt(per(first.val)):'—';
-    $('pMax').textContent = maxM?fmt(per(maxM.val)):'—';
-    $('pAvg').textContent = totalMeses?fmt(per(total/totalMeses)):'—';
+    // valor por pessoa, marcado ao lado de cada valor
+    const icon = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="5.2" r="2.7"/><path d="M2.8 14c.6-2.8 2.7-4.3 5.2-4.3s4.6 1.5 5.2 4.3"/></svg>';
+    const setEach = (id,v) => { const e=$(id); e.hidden = n===1 || v==null; if(!e.hidden) e.innerHTML = `${icon}${fmt(per(v))} <em>cada</em>`; };
+    setEach('eTotal', total);
+    setEach('eFirst', first?first.val:null);
+    setEach('eMax', maxM?maxM.val:null);
+    setEach('eAvg', totalMeses?total/totalMeses:null);
+    setEach('eBase', base);
+    if(n>1) $('eTotal').innerHTML = `${icon}${fmt(per(total))} <em>para cada pessoa</em>`;
     document.querySelector('table').classList.toggle('hide-p', n===1);
     $('fPer').textContent = fmt(per(total));
 
