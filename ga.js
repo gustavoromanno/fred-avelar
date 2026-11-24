@@ -2,7 +2,7 @@
    Para ativar: coloque o ID de métricas abaixo (formato G-XXXXXXXXXX).
    Sem ID, nada é carregado. */
 (function () {
-  var GA_ID = ""; // ex.: "G-ABC123XYZ9"
+  var GA_ID = "G-CS26GN0FF1";
   if (!GA_ID) return;
 
   var KEY = "fa-cookies";
