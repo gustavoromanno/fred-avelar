@@ -14,7 +14,7 @@
   --line:rgba(201,169,106,.18); --line-strong:rgba(201,169,106,.35); --line-soft:rgba(238,241,245,.08);
   --gold:#c9a96a; --gold-hi:#e4cd9a; --gold-lo:#8a7449; --gold-ink:#1a1407;
   --silver:#aeb8c6; --muted:#8792a3; --paper:#eef1f5;
-  --warn:#e8957a; --warn-bg:rgba(232,149,122,.12);
+  --bad:#ff6b6b; --bad-bg:rgba(255,107,107,.14); --warn:#e8957a; --warn-bg:rgba(232,149,122,.12);
   --display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
   --body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
@@ -69,19 +69,14 @@ label{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;font-size:10.5px;
 .chip{display:inline-flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;padding:6px 12px;border-radius:999px;background:rgba(8,17,31,.82);border:1px solid var(--line-strong);color:var(--gold-hi)}
 .chip.warn{background:var(--warn-bg);border-color:var(--warn);color:var(--warn);letter-spacing:.04em;text-transform:none;font-size:12.5px}
 .chip svg{width:14px;height:14px;flex:none}
-.chip.warn{text-transform:uppercase;letter-spacing:.14em;font-size:11px}
-.issues{display:grid;gap:6px;padding:12px 14px;border:1px solid var(--warn);border-radius:12px;background:var(--warn-bg);color:var(--warn);font-size:13.5px}
-.issues div{display:flex;gap:8px;align-items:flex-start}
-.issues svg{width:16px;height:16px;flex:none;margin-top:2px}
-.issues span{color:var(--paper)}
-.inp.bad{border-color:var(--warn)}
+.chip.bad{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
 
 .result{display:grid;gap:22px;min-width:0}
 .hero{border:1px solid var(--line-strong);border-radius:24px;padding:clamp(20px,3.5vw,32px);display:grid;gap:20px;background:
   radial-gradient(80% 120% at 100% 0%,rgba(201,169,106,.12),transparent 60%),linear-gradient(180deg,var(--navy-2),var(--navy))}
 .hero-top{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:flex-start}
 .client{font-family:var(--display);font-style:italic;font-size:22px;color:var(--gold-hi);margin-top:4px}
-.big{font-family:var(--display);font-size:clamp(38px,6vw,60px);line-height:1;font-weight:400;color:var(--gold-hi);font-variant-numeric:tabular-nums}
+.big{overflow-wrap:anywhere;font-family:var(--display);font-size:clamp(38px,6vw,60px);line-height:1;font-weight:400;color:var(--gold-hi);font-variant-numeric:tabular-nums}
 .big small{font-family:var(--body);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--silver);font-weight:600;margin-left:10px}
 .meter{display:grid;gap:8px}
 .meter-bar{height:8px;border-radius:99px;background:rgba(8,17,31,.7);overflow:hidden;border:1px solid var(--line)}
@@ -93,7 +88,7 @@ label{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;font-size:10.5px;
 .kpi+.kpi{border-left:1px solid var(--line)}
 @media (max-width:640px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:14px}.kpi:nth-child(3){border-left:0;padding-left:0}}
 .kpi .k{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--silver)}
-.kpi .v{font-family:var(--mono);font-size:17px;margin-top:4px;font-variant-numeric:tabular-nums}
+.kpi .v{overflow-wrap:anywhere;font-family:var(--mono);font-size:17px;margin-top:4px;font-variant-numeric:tabular-nums}
 .kpi .s{font-size:12px;color:var(--muted)}
 
 .chart-wrap{position:relative}
@@ -182,9 +177,8 @@ textarea#copyFallback{width:100%;min-height:130px;background:var(--field);color:
             <div class="eyebrow" id="h-res">Total na evolução de obra</div>
             <div class="client" id="clientOut" hidden></div>
           </div>
-          <span class="chip ok" id="statusChip"></span>
+          <span class="chip ok" id="statusChip" role="status"></span>
         </div>
-        <div class="issues" id="issues" role="alert" hidden></div>
         <div class="big" id="totalOut">R$ 60.000<small>em 29 meses</small></div>
         <div class="meter">
           <div class="meter-bar"><i id="meterFill" style="width:100%"></i></div>
@@ -338,14 +332,12 @@ textarea#copyFallback{width:100%;min-height:130px;background:var(--field);color:
     if(!totalMeses) issues.push('Informe as fases do cronograma.');
     else if(totalMeses!==prazo) issues.push(`As fases somam ${totalMeses} meses e o prazo é ${prazo}.`);
     if(!ok && totalMeses) issues.push('O total passou do teto.');
-    ['imovel','financiado','tetoPct','prazo'].forEach(id=>$(id).closest('.inp').classList.toggle('bad', bad.has(id)));
-    const box = $('issues');
     if(issues.length){
-      chip.className='chip warn'; chip.innerHTML = warn+'Confira os valores';
-      box.innerHTML = issues.map(t=>`<div>${warn}<span>${t}</span></div>`).join(''); box.hidden=false;
+      chip.className='chip bad'; chip.innerHTML = warn+'Ultrapassa o teto · verifique';
+      chip.title = issues.join(' ');
     } else {
       chip.className='chip ok'; chip.innerHTML = check+'Não ultrapassa o teto';
-      box.hidden=true; box.innerHTML='';
+      chip.title = '';
     }
 
     const pctUsed = teto>0 ? Math.min(100,total/teto*100) : 0;
