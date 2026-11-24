@@ -69,6 +69,12 @@ label{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;font-size:10.5px;
 .chip{display:inline-flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;padding:6px 12px;border-radius:999px;background:rgba(8,17,31,.82);border:1px solid var(--line-strong);color:var(--gold-hi)}
 .chip.warn{background:var(--warn-bg);border-color:var(--warn);color:var(--warn);letter-spacing:.04em;text-transform:none;font-size:12.5px}
 .chip svg{width:14px;height:14px;flex:none}
+.chip.warn{text-transform:uppercase;letter-spacing:.14em;font-size:11px}
+.issues{display:grid;gap:6px;padding:12px 14px;border:1px solid var(--warn);border-radius:12px;background:var(--warn-bg);color:var(--warn);font-size:13.5px}
+.issues div{display:flex;gap:8px;align-items:flex-start}
+.issues svg{width:16px;height:16px;flex:none;margin-top:2px}
+.issues span{color:var(--paper)}
+.inp.bad{border-color:var(--warn)}
 
 .result{display:grid;gap:22px;min-width:0}
 .hero{border:1px solid var(--line-strong);border-radius:24px;padding:clamp(20px,3.5vw,32px);display:grid;gap:20px;background:
@@ -178,6 +184,7 @@ textarea#copyFallback{width:100%;min-height:130px;background:var(--field);color:
           </div>
           <span class="chip ok" id="statusChip"></span>
         </div>
+        <div class="issues" id="issues" role="alert" hidden></div>
         <div class="big" id="totalOut">R$ 60.000<small>em 29 meses</small></div>
         <div class="meter">
           <div class="meter-bar"><i id="meterFill" style="width:100%"></i></div>
@@ -319,9 +326,27 @@ textarea#copyFallback{width:100%;min-height:130px;background:var(--field);color:
     const chip = $('statusChip');
     const check = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8.5l3 3 7-7"/></svg>';
     const warn = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v6M8 12v1"/></svg>';
-    if(!totalMeses){ chip.className='chip warn'; chip.innerHTML = warn+'Informe as fases'; }
-    else if(ok){ chip.className='chip ok'; chip.innerHTML = check+'Não ultrapassa o teto'; }
-    else { chip.className='chip warn'; chip.innerHTML = warn+'Acima do teto'; }
+    // conferência dos dados digitados
+    const LIM_PRAZO = 48;
+    const issues = [], bad = new Set();
+    if(imovel<=0){ issues.push('Informe o valor do imóvel.'); bad.add('imovel'); }
+    if(fin<=0){ issues.push('Informe o valor financiado.'); bad.add('financiado'); }
+    if(imovel>0 && fin>imovel){ issues.push(`O financiamento (${BRL0.format(fin)}) é maior que o valor do imóvel (${BRL0.format(imovel)}).`); bad.add('financiado'); bad.add('imovel'); }
+    if(tetoPct<=0){ issues.push('Informe o percentual do teto.'); bad.add('tetoPct'); }
+    if(prazo<=0){ issues.push('Informe o prazo de obra.'); bad.add('prazo'); }
+    else if(prazo>LIM_PRAZO){ issues.push(`Prazo de obra de ${prazo} meses, acima de ${LIM_PRAZO} meses.`); bad.add('prazo'); }
+    if(!totalMeses) issues.push('Informe as fases do cronograma.');
+    else if(totalMeses!==prazo) issues.push(`As fases somam ${totalMeses} meses e o prazo é ${prazo}.`);
+    if(!ok && totalMeses) issues.push('O total passou do teto.');
+    ['imovel','financiado','tetoPct','prazo'].forEach(id=>$(id).closest('.inp').classList.toggle('bad', bad.has(id)));
+    const box = $('issues');
+    if(issues.length){
+      chip.className='chip warn'; chip.innerHTML = warn+'Confira os valores';
+      box.innerHTML = issues.map(t=>`<div>${warn}<span>${t}</span></div>`).join(''); box.hidden=false;
+    } else {
+      chip.className='chip ok'; chip.innerHTML = check+'Não ultrapassa o teto';
+      box.hidden=true; box.innerHTML='';
+    }
 
     const pctUsed = teto>0 ? Math.min(100,total/teto*100) : 0;
     $('meterFill').style.width = pctUsed+'%';
